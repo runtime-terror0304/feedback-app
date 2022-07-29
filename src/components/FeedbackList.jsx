@@ -2,29 +2,31 @@ import FeedbackItem from "./FeedbackItem"
 import {motion, AnimatePresence, animate} from 'framer-motion'
 import {useContext} from 'react'
 import FeedbackContext from "../context/FeedbackContext"
+import Spinner from "./shared/Spinner"
 
 function FeedbackList() {
-    const {feedback} = useContext(FeedbackContext);
+    const {feedback, isLoading} = useContext(FeedbackContext);
 
-    if(!feedback || feedback.length === 0)
+    if(!isLoading && (!feedback || feedback.length === 0))
     {
         return(
             <p>There is no feedback yet!</p>
         )
     }
 
-    return (
+    return isLoading ? < Spinner /> : ( 
         <div className="feedback-list">
-            <AnimatePresence>
-            {feedback.map((item) => {
-                return (
-                    <motion.div key={item.id} initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
-                        <FeedbackItem key={item.id} item={item} />
-                    </motion.div>
-                )
-            })}
-            </AnimatePresence>
+        <AnimatePresence>
+        {feedback.map((item) => {
+            return (
+                <motion.div key={item.id} initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
+                    <FeedbackItem key={item.id} item={item} />
+                </motion.div>
+            )
+        })}
+        </AnimatePresence>
         </div>
+    )
 
     //the version without the animation
     // return (
@@ -35,7 +37,6 @@ function FeedbackList() {
     //         )
     //     })}
     // </div>
-  )
 }
 
 //this is how we can set the type of the prop to some array of objects along with defining the shape of the object.
