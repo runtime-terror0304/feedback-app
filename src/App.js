@@ -1,37 +1,39 @@
+// there is a BrowserRouter or HashRouter.
+//BrowserRouter uses the HTML5 history API to keep the user in sync with the URL.
+//HashRouter uses hash portion of the URL to keep it in sync.
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import Header from "./components/Header"
 import FeedbackList from "./components/FeedbackList"
-import {useState} from "react";
 import FeedbackStats from "./components/FeedbackStats"
 import FeedbackData from "./data/FeedbackData."
 import FeedbackForm from "./components/FeedbackForm"
-import {v4 as uuidv4} from  'uuid'
+import AboutPage from "./pages/AboutPage"
+import AboutIconLink from './components/AboutIconLink';
+import {FeedbackProvider} from './context/FeedbackContext'
 
 function App(){
-        const [feedback, setFeedback] = useState(FeedbackData)  
-
-        const deleteFeedback = function(id){
-            if(window.confirm('Do you want to delete this feedback ?'))
-            {
-                setFeedback(feedback.filter((item) => {
-                    return item.id !== id;
-                }))
-            }
-        }
-
-        const addFeedback = (newFeedback) => {
-            newFeedback.id = uuidv4()
-            setFeedback([newFeedback,...feedback]);
-        }
-
         return (
-        <>
+        <FeedbackProvider>
+        <Router>
             <Header />
             <div className="container">
-                <FeedbackForm handleAdd={addFeedback}/>
-                <FeedbackStats feedback = {feedback} />
-                <FeedbackList feedback={feedback} handleDelete={deleteFeedback}/>
+                <Routes>
+                    <Route exact path='/' element={
+                        <>
+                            <FeedbackForm/>
+                            <FeedbackStats />
+                            <FeedbackList />
+                        </>
+                    }>
+                    </Route>
+
+                    <Route path='/about' element={<AboutPage />} />
+                </Routes>
+
+                <AboutIconLink />
             </div>
-        </>
+        </Router>
+        </FeedbackProvider>
     )
 }
 

@@ -1,13 +1,27 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Card from "./shared/Card"
-import Button from "./shared/Button";
-import RatingSelect from "./RatingSelect";
+import Button from "./shared/Button"
+import RatingSelect from "./RatingSelect"
+import {useContext} from 'react'
+import FeedbackContext from "../context/FeedbackContext"
 
-function FeedbackForm({handleAdd}) {
+function FeedbackForm() {
     const [text, setText] = useState('');
     const [btnDisabled, setBtnDisabled] = useState(true);
     const [message, setMessage] = useState('');
     const [rating, setRating] = useState(10);
+
+    const {addFeedback, feedbackEdit, updateFeedback, setFeedbackEdit} = useContext(FeedbackContext);
+
+    //we want ki jab mei edit wale button pe click karu, and we know jab mei karunga toh feedbackEdit state mei change hoga kuch...tab I want ki form mei uss particular item ka data aa jaye...ussey kehtey effect or side-effect...useEffect ko function ki tarh call krte and usmei callback dete aur doosra argument mei array of dependencies dete jinnmei change honne pe call back run hota...otherwise agr kuch na dei array mei toh it runs everytime component loads.
+    useEffect(() => {
+        if(feedbackEdit.edit === true)
+        {
+            setBtnDisabled(false);
+            setText(feedbackEdit.item.text);
+            setRating(feedbackEdit.item.rating)
+        }
+    }, [feedbackEdit])
 
     // yeh function setup kiya hai ki jab input field mei kuch change aye toh ussko text ki state mei reflect kro..nothing special
     const handleTextChange = (e) => {
@@ -37,9 +51,16 @@ function FeedbackForm({handleAdd}) {
                 rating
             }
 
-            handleAdd(newFeedback);
+            if(feedbackEdit.edit === true)
+            {
+                updateFeedback(feedbackEdit.item.id, newFeedback)
+            }
+            else{
+                addFeedback(newFeedback);
+            }
 
             setText('');
+            setFeedbackEdit({item: {}, edit: false});
         }
     }
 

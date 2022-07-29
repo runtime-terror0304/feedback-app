@@ -1,7 +1,18 @@
 import {useState} from 'react'
+import {useContext, useEffect} from 'react'
+import FeedbackContext from '../context/FeedbackContext'
 
 function RatingSelect({select}) {
-    const [selected, setSelected] = useState(10)
+    const [selected, setSelected] = useState(10);
+
+    const {feedbackEdit} = useContext(FeedbackContext)
+
+    //yaha basically ek global state bana li thi humm ne bas uss state ko change ka effect show kr diya tha form mei but yaha bhi usska effect chahiye tha as yaha pe humare paas radio buttons ka alag se component tha.
+    useEffect(() => {
+        if(feedbackEdit.edit){
+            setSelected(feedbackEdit.item.rating) 
+        }
+    }, [feedbackEdit])
 
     const handleChange = (e) => {
         setSelected(parseInt(e.currentTarget.value))
